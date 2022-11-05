@@ -1,9 +1,10 @@
 ---
-title: "تحلیل داده بیماران کرونایی"
-date: "اول مهرماه، ۱۴۰۰"
-author: احمدرضا احیائی
-affiliation: "یک تحلیل‌گر داده مستقل"
-location: "توبینگن، آلمان"
+title: "تحلیل داده‌های پیمایش ارزش‌های جهانی"
+subtitle: "موج هفتم"
+date: "آبان ۱۴۰۱"
+author: بهمن اجدری
+affiliation: "تحلیل‌گر داده "
+location: "تهران،ایران"
 titlepage: true
 toc: true
 content-has-page: true
@@ -11,48 +12,169 @@ logo-primary: src/icon/RTLNotes.png
 logo-secondary: src/icon/RWLogo.png
 output:
   RTLNotes::latex_report
+editor_options: 
+  chunk_output_type: inline
 ...
 
 ```{r,include=FALSE}
-library(tinytex)
-options(tinytex.verbose = TRUE)
+library(tidyverse)
+library(lubridate)
+library(scales)
+library(gt)
+library(gtExtras)
+
+```
+
+# پیمایش ارزش‌های جهانی
+در اواخر دهه ۷۰ میلادی دو استاد جامعه‌شناسی دانشگاه تیلبورگ در هلند در فکر بررسی تاثیر تغییرات اقتصادی و فناوری بر زندگی روزمره انسان‌ها بودند. آن‌ها می‌خواستند بدانند این رشد سریع اقتصاد و فناوری چه تاثیری بر جوامع پیشرفته‌تر گذاشته و چگونه ارزش‌ها و نگرش‌های مردم را تغییر داده است. به همین منظور پرسشنامه‌ای طراحی شد و در نزدیک به ۲۰ کشور پیشرفته اروپایی توزیع شد تا بررسی شود مردم اروپا چطور فکر می‌کنند و چه چیزهایی برایشان مهم است. صرف نظر از این نتایج پروژه، این پیمایش بزرگ نظر یک استاد علوم سیاسی را هزاران کیلومتر آن‌طرف‌تر در میشیگان آمریکا به خود جلب کرد.  
+پروفسور رونالد اینگلهارت در اوایل دهه هشتاد میلادی مشغول کار مشابهی بود. او مشغول نظریه پردازی در خصوص دلایل تغییرات سریع و ناگهانی چرخش‌های فرهنگی، سیاسی و اجتماعی در اروپای غربی و آمریکای شمالی بود که با اطلاع از پروژه دانشگاه تیلبورگ در هلند پیشنهاد توسعه سوالات پرسشنامه برای دربرگرفتن طیف بیشتری از خصوصیات سیاسی، اجتماعی و رفتاری پاسخ‌دهندگان و همچنین توسعه جغرافیایی محل توزیع پرسشنامه‌ها به ماورای مرزهای اروپا را مطرح کرد. اینگلهارت با راه اندازی پروژه‌ای به نام پیمایش ارزش‌های جهانی در سال ۱۹۸۱ یکی بزرگترین پروژه‌های دانشگاهی جهان در حوزه علوم اجتماعی را کلید زد که تاکنون نیز ادامه دارد.  
+رونالد اینگلهارت (۲۰۲۱-۱۹۳۴)در طول دوران خود کاری دستاوردهای بزرگی باقی گذاشت. مقالات و کتاب‌های متعددی از وی که بسیاری از آن‌ها منابع اصلی علوم سیاسی و اجتماعی محسوب می‌شوند از میراث ماندگار اوست. اما شاید بزرگترین خدمت او به علوم اجتماعی، داده‌های پرسشنامه‌ای است که با نظارت وی در ۱۲۰ کشور جهان (تقریبا ۹۰ درصد جمعیت جهان) در ۷ مقطع زمانی جمع‌آوری شده است. این داده‌ها بصورت رایگان در اختیار مردم و جامعه دانشگاهی قرار گرفته است و تا کنون در طیف وسیعی از شاخه‌های علوم اجتماعی مورد استفاده قرار گرفته است. چند صدهزار نفری که در تمام دنیا مورد پرسش قرار گرفته‌اند امکان مقایسه دیدگاه‌های مردم دنیا را در مکان‌های جغرافیایی مختلف را فراهم می‌کند.  
+
+## داده‌های ایران
+از ۷ موج انجام شده در موسسه پیمایش ارزش‌های جهانی، ایرانیان در سه موج چهارم، پنجم و هفتم حاضر هستند. دولت دهم ایران اجازه برگزاری موج ششم را در ایران نداد. موج هفتم در ایران در سال ۱۳۹۹ انجام شده است و داده‌های آن در سال ۱۴۰۰ منتشر شده است. لازم به ذکر است که موج هفتم به دلیل محدودیت‌های همه‌گیری کرونا، فرایند جمع‌آوری و انتشار داده‌ها کمی بیشتر از حد معمول طول کشیده است. داده‌های ایران (۱۵۰۰ پرسشنامه) برای جمعیت ایران معرف است. به بیان دیگر تحلیل‌های مبتنی بر داده‌های پیمایش ارزش‌های جهانی قابل تعمیم به کل جمعیت ایران است.   
+تعداد سوالات پرسشنامه ایران، ۲۹۰ سوال است. این سوالات عموما به صورت مصاحبه حضوری از مخاطبین پرسیده شده. شرایط پاسخ به سوالات و زمان دقیق پاسخ‌ها در فایل داده‌ها موجود است. پاسخ دهندگان به صورت تصادفی از جمعیت کشور انتخاب شده‌اند و امکان دسترسی به هویت آن‌ها از طریق پرسشنامه امکان‌پذیر نیست.    
+
+## نحوه استفاده از داده
+داده‌های پیمایش جهانی در حوزه‌های مختلفی از جمله توسعه اقتصادی، توسعه دموکراسی، دین، برابری جنسیتی، سرمایه اجتماعی و بهداشت عمومی قابل استفاده است. این داده‌ها بر اساس پرسشنامه‌ای است که با جمع‌بندی پیشنهادهای اساتید علوم اجتماعی در سراسر جهان که به موسسه پیمایش ارزش‌های جهانی ارائه می‌شود. پرسشنامه هر کشور نیز از وب‌سایت موسسه قابل دسترسی است. لازم به ذکر است که هر کشور می‌تواند تغییرات بسیار محدودی را در پرسشنامه ایجاد کند. این تغییرات نباید برای بیشتر از ۱۲ سوال از کل سوالات موجود در پرسشنامه باشد.   
+استفاده از این داده‌ها تنها برای مقاصد غیر انتفاعی مجاز است. در صورت استفاده از این داده‌ها در مقالات و پایان‌نامه‌های دانشگاهی،ارجاع به داده‌ها باید به صورتی که وب‌سایت موسسه آورده شده در بخش منابع مقاله یا پایان‌نامه قرار‌ گیرد. برای نمونه اگر از موج ششم پیمایش برای کار تحقیقی استفاده کرده‌اید باید به صورت زیر به آن ارجاع دهید:  
+
+>Inglehart, R., C. Haerpfer, A. Moreno, C. Welzel, K. Kizilova, J. Diez-Medrano, M. Lagos, P. Norris, E. Ponarin & B. Puranen et al. (eds.). 2014. World Values Survey: Round Six - Country-Pooled Datafile Version: https://www.worldvaluessurvey.org/WVSDocumentationWV6.jsp. Madrid: JD Systems Institute.  
+
+## نحوه دسترسی به داده‌ها
+تمام داده‌ها از وب‌سایت رسمی پیمایش ارزش‌های جهانی قابل دریافت است. داده‌ها در انواع مختلفی قابل دسترس است که امکان استفاده از نرم‌افزار‌های مختلف از جمله R  و SPSS را فراهم می‌کند. داده‌ها به تفکیک هر موج و یا بصورت تجمیع شده قابل دسترس است. همچنین می‌توانید داده‌های هر کشور را جداگانه و در فرمت‌های داده مختلف را از سایت موسسه دریافت کنید.  
+
+\newpage
+
+# مشخصات پاسخگویان  
+
+```{r}
+wvs_ir <- readr::read_csv("/home/bahman/Documents/Data/wvs/data/F00010944-WVS_Wave_7_Iran_Excel_v2.0.csv")
+wvs_ir_clean <- wvs_ir %>%
+  janitor::clean_names() %>%
+  mutate(q260_sex = factor(q260_sex , labels = c("male" , "female"))) %>%
+  mutate(urban_rural = factor(h_urbrural_urban_rural, labels = c("urban" , "rural") ))
+levels(wvs_ir_clean$urban_rural)
+```
+
+## جنسیت پاسخ‌دهندگان  
+
+```{r}
 source("manuscript/global.R")
+wvs_ir_clean %>%
+  mutate(q260_sex = factor(q260_sex , labels = c("male" , "female"))) %>%
+  ggplot(aes(q260_sex , fill= q260_sex)) +
+  geom_bar(show.legend = FALSE)+
+  scale_x_discrete(label = c("مرد" , "زن"))+
+  stat_count(geom = "text", colour = "gold", size =3.5,
+aes(label = to_fa_numbers(..count..)),position=position_stack(vjust=0.95))+
+  scale_fill_discrete(values = c("#61764B" , "#E14D2A"))+
+  labs(
+    title = "تعداد شرکت‌کنندگان به تفکیک جنسیت",
+    x = "",
+    y = ""
+  )+
+  theme_light()+
+  theme_fa
+  
+```
+```{r}
+wvs_ir_clean %>%
+  mutate(gender = factor(q260_sex , labels = c("مرد" , "زن"))) %>%
+  group_by(gender) %>%
+  summarise(n = n()) %>%
+  mutate(pct = paste0(round(n/sum(n),digits = 2)*100, "%")) %>%
+  knitr::kable()
 ```
 
-# RMarkdown + لاتک
+## سن پاسخ‌دهندگان
 
-
-این یک متن RMarkdown ساده برای نشان دادن ویژگی‌های بسته‌ی RTLNotes است.
-برای ایجاد فصل و زیر فصل می‌توانید از ‍‍‍‍‍‍`#` و `##` در ابتدای خط با ذکر عنوان استفاده کنید.
-
-
-## استفاده از دستورهای برنامه‌نویسی
-
-کدهای خود را دو صورت می‌توانید در متن نمایش دهید و یا اجرا کنید. اول به صورت یک جعبه رنگی مستقل،
-```{r cars}
-summary(cars)
+```{r}
+wvs_ir_clean %>%
+  filter(q261_year_of_birth > 1000) %>%
+  mutate(gender = factor(q260_sex , labels = c("مرد" , "زن"))) %>%
+  ggplot(aes(q262_age , fill = gender))+
+  geom_density(alpha = 0.3 , color = "yellow" , show.legend = FALSE)+
+  scale_y_continuous()+
+  annotate("text" , x = 43 , y = 0.03 , label = "زن")+
+  annotate("text" , x = 50 , y = 0.02 , label = "مرد")+
+  labs(
+    title = "پراکندگی سنی پاسخگویان زن و مرد",
+    x = "",
+    y = ""
+  )+
+  theme_light()+
+  theme_fa
 ```
-و به صورت برخط
-`r 2^10` `2^10=`.
+```{r}
+gt_age <- wvs_ir_clean %>%
+  mutate(age_range = case_when(
+    between(q262_age, 18, 29) ~ "18-29",
+    between(q262_age, 30, 49) ~ "30-49",
+    TRUE ~ "50+"
+  )) %>%
+  mutate(age_range = factor(age_range)) %>%
+  count(age_range) %>%
+  mutate(pct = round(n/sum(n)*100 , digits = 0))
+gt_age %>%
+  gt() %>%
+  tab_header(
+    title = "توزیع سنی پاسخ‌دهندگان",
+    subtitle = "موج هفتم پیمایش ارزش‌های جهانی"
+  ) %>%
+  cols_move_to_start(columns = names(gt_age[length(colnames(gt_age)):1])) %>%
+ # cols_width(age_range ~ px(200),
+  #           n ~ px(150),
+   #          pct ~ px(150))%>%
+  cols_label(
+    age_range = "سن",
+    n = "فراوانی",
+    pct = "درصد"
+  ) %>%
+  gt_theme_538(table.width = px(600))%>%
+    tab_options(heading.align = "right")
 
-## Markdown
+```
 
-برای نوشتن متن به راحتی از دستورهای  Markdown می‌توانید بهره ببرید. به طور مثال برای ایجاد یک فهرست مانند زیر عمل می‌کنیم:
+## توزیع مکانی پاسخ‌دهندگان  
+
+```{r}
+library(kableExtra)
+kableExtra::kbl(gt_age ,
+                booktabs = TRUE ,
+                col.names = c("سن","فراوانی","درصد"),
+                label = "پیمایش ارزش‌های جهانی موج هفتم") %>%
+  kableExtra::kable_styling(full_width = FALSE) %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2, width = "10em") %>%
+  column_spec(3, width = "10em")
+```
 
 
-- فهرست یک
-- فهرست دو
-    - زیرفهرست
+```{r}
+wvs_ir_clean |>
+  filter(q42_basic_kinds_of_attitudes_concerning_society > 0) |>
+  count(q42_basic_kinds_of_attitudes_concerning_society, q260_sex) |>
+  mutate(pct = round(n/sum(n) *100,digits = 1)) |>
+  ggplot(aes(q260_sex , pct , fill= factor(q42_basic_kinds_of_attitudes_concerning_society)))+
+  geom_col(show.legend = TRUE,position = position_fill(reverse = TRUE) , width = .5)+
+  geom_text(aes(x = q260_sex,y = pct,label = to_fa_numbers(paste0(pct, "%"))), position = position_fill(vjust = 0.5 , reverse = TRUE),family = "sahel FD")+
+  scale_fill_discrete(label = c("انقلاب" , "اصلاح" , "حفظ وضع موجود"),guide= guide_legend(reverse = FALSE))+
+  scale_y_continuous(labels = percent_format())+
+  scale_x_discrete(label = c("مرد","زن"))+
+  coord_flip()+
+  labs(
+    x = "",
+    y= "",
+    title = "نحوه نگرش به تغییرات اجتماعی",
+    fill = ""
+  ) +
+  theme_light()+
+  theme(legend.position = "bottom")+
+  theme_fa
+```
 
-برای بیان نقل قول هم می‌توانید از علامت `>` در ابتدای متن خود استفاده کنید
-
-
-> بر این رواق زبر جد نوشته اند به زر
-> که جز نکویی اهل کرم نخواهد ماند
-
-
-## لاتک
-
-در محیط RMarkdown می‌توانید مشابه لاتک فرمول‌های خود را به صورت مستقل و برخط بنویسید. برای این‌ کار باید فرمول خود را در میان ‍‍ ‍‍`$$` و یا `$` بگذارید.
-
+```{r}
+wvs_ir_clean %>%
+  count(t= q56_standard_of_living_comparing_with_your_parents)
+```
 

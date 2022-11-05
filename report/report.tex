@@ -18,6 +18,23 @@
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
+%% Support for zero-width non-joiner characters.
+\makeatletter
+\def\zerowidthnonjoiner{%
+  % Prevent ligatures and adjust kerning, but still support hyphenating.
+  \texorpdfstring{%
+    \textormath{\nobreak\discretionary{-}{}{\kern.03em}%
+      \ifvmode\else\nobreak\hskip\z@skip\fi}{}%
+  }{}%
+}
+\makeatother
+\ifPDFTeX
+  \DeclareUnicodeCharacter{200C}{\zerowidthnonjoiner}
+\else
+  \catcode`^^^^200c=\active
+  \protected\def ^^^^200c{\zerowidthnonjoiner}
+\fi
+%% End of ZWNJ support
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \IfFileExists{microtype.sty}{% use microtype if available
@@ -38,22 +55,55 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-  pdftitle={تحلیل داده بیماران کرونایی},
-  pdfauthor={احمدرضا احیائی},
+  pdftitle={تحلیل داده‌های پیمایش ارزش‌های جهانی},
+  pdfauthor={بهمن اجدری},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 \setlength{\emergencystretch}{3em} % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
 
-\title{تحلیل داده بیماران کرونایی}
-\author{احمدرضا احیائی}
-\date{اول مهرماه، ۱۴۰۰}
+\title{تحلیل داده‌های پیمایش ارزش‌های جهانی}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{موج هفتم}
+\author{بهمن اجدری}
+\date{آبان ۱۴۰۱}
 
 % ...................................................................... %
 %
@@ -542,20 +592,22 @@ mathfontsizescale=1.1%
 \node[below,text width=\paperwidth,font=\color{titlepageTextColor}] at (page cs:0.0+\titleHjust,0.0+\titleVjust) {
 \begin{flushright}
 \begin{RTL}
-    \Huge{تحلیل داده بیماران کرونایی}
+    \Huge{تحلیل داده‌های پیمایش ارزش‌های جهانی}
   \vspace{0.3cm}
   
+    \huge{موج هفتم}
+  \vspace{0.3cm}
   
   % add bodoni font to date
     \vspace{0.3cm}
-  \Large{اول مهرماه، ۱۴۰۰}
+  \Large{آبان ۱۴۰۱}
   \vspace{0.3cm}
   
   \vspace{0.3cm}
-    \Large{ یک تحلیل‌گر داده مستقل}
+    \Large{ تحلیل‌گر داده}
   \vspace{0.1cm}
   
-    \large{توبینگن، آلمان}
+    \large{تهران،ایران}
     \end{RTL}
   \end{flushright}
 };
@@ -564,7 +616,7 @@ mathfontsizescale=1.1%
 
 \begin{flushright}
 \begin{RTL}
-    \huge{\textcolor{titlepageAuthorTextColor}{احمدرضا احیائی}}
+    \huge{\textcolor{titlepageAuthorTextColor}{بهمن اجدری}}
   \vspace{0.3cm}
   \end{RTL}
 \end{flushright}
@@ -603,64 +655,165 @@ mathfontsizescale=1.1%
 
 
 
-\hypertarget{rmarkdown-ux644ux627ux62aux6a9}{%
-\section{RMarkdown + لاتک}\label{rmarkdown-ux644ux627ux62aux6a9}}
+\hypertarget{ux67eux6ccux645ux627ux6ccux634-ux627ux631ux632ux634ux647ux627ux6cc-ux62cux647ux627ux646ux6cc}{%
+\section{پیمایش ارزش‌های
+جهانی}\label{ux67eux6ccux645ux627ux6ccux634-ux627ux631ux632ux634ux647ux627ux6cc-ux62cux647ux627ux646ux6cc}}
 
-این یک متن RMarkdown ساده برای نشان دادن ویژگی‌های بسته‌ی RTLNotes است.
-برای ایجاد فصل و زیر فصل می‌توانید از ‍‍‍‍‍‍\texttt{\#} و \texttt{\#\#}
-در ابتدای خط با ذکر عنوان استفاده کنید.
+در اواخر دهه ۷۰ میلادی دو استاد جامعه‌شناسی دانشگاه تیلبورگ در هلند در
+فکر بررسی تاثیر تغییرات اقتصادی و فناوری بر زندگی روزمره انسان‌ها بودند.
+آن‌ها می‌خواستند بدانند این رشد سریع اقتصاد و فناوری چه تاثیری بر جوامع
+پیشرفته‌تر گذاشته و چگونه ارزش‌ها و نگرش‌های مردم را تغییر داده است. به
+همین منظور پرسشنامه‌ای طراحی شد و در نزدیک به ۲۰ کشور پیشرفته اروپایی
+توزیع شد تا بررسی شود مردم اروپا چطور فکر می‌کنند و چه چیزهایی برایشان
+مهم است. صرف نظر از این نتایج پروژه، این پیمایش بزرگ نظر یک استاد علوم
+سیاسی را هزاران کیلومتر آن‌طرف‌تر در میشیگان آمریکا به خود جلب کرد.\\
+پروفسور رونالد اینگلهارت در اوایل دهه هشتاد میلادی مشغول کار مشابهی بود.
+او مشغول نظریه پردازی در خصوص دلایل تغییرات سریع و ناگهانی چرخش‌های
+فرهنگی، سیاسی و اجتماعی در اروپای غربی و آمریکای شمالی بود که با اطلاع
+از پروژه دانشگاه تیلبورگ در هلند پیشنهاد توسعه سوالات پرسشنامه برای
+دربرگرفتن طیف بیشتری از خصوصیات سیاسی، اجتماعی و رفتاری پاسخ‌دهندگان و
+همچنین توسعه جغرافیایی محل توزیع پرسشنامه‌ها به ماورای مرزهای اروپا را
+مطرح کرد. اینگلهارت با راه اندازی پروژه‌ای به نام پیمایش ارزش‌های جهانی در
+سال ۱۹۸۱ یکی بزرگترین پروژه‌های دانشگاهی جهان در حوزه علوم اجتماعی را
+کلید زد که تاکنون نیز ادامه دارد.\\
+رونالد اینگلهارت (۲۰۲۱-۱۹۳۴)در طول دوران خود کاری دستاوردهای بزرگی باقی
+گذاشت. مقالات و کتاب‌های متعددی از وی که بسیاری از آن‌ها منابع اصلی علوم
+سیاسی و اجتماعی محسوب می‌شوند از میراث ماندگار اوست. اما شاید بزرگترین
+خدمت او به علوم اجتماعی، داده‌های پرسشنامه‌ای است که با نظارت وی در ۱۲۰
+کشور جهان (تقریبا ۹۰ درصد جمعیت جهان) در ۷ مقطع زمانی جمع‌آوری شده است.
+این داده‌ها بصورت رایگان در اختیار مردم و جامعه دانشگاهی قرار گرفته است و
+تا کنون در طیف وسیعی از شاخه‌های علوم اجتماعی مورد استفاده قرار گرفته
+است. چند صدهزار نفری که در تمام دنیا مورد پرسش قرار گرفته‌اند امکان
+مقایسه دیدگاه‌های مردم دنیا را در مکان‌های جغرافیایی مختلف را فراهم می‌کند.
 
-\hypertarget{ux627ux633ux62aux641ux627ux62fux647-ux627ux632-ux62fux633ux62aux648ux631ux647ux627ux6cc-ux628ux631ux646ux627ux645ux647ux646ux648ux6ccux633ux6cc}{%
-\subsection{استفاده از دستورهای
-برنامه‌نویسی}\label{ux627ux633ux62aux641ux627ux62fux647-ux627ux632-ux62fux633ux62aux648ux631ux647ux627ux6cc-ux628ux631ux646ux627ux645ux647ux646ux648ux6ccux633ux6cc}}
+\hypertarget{ux62fux627ux62fux647ux647ux627ux6cc-ux627ux6ccux631ux627ux646}{%
+\subsection{داده‌های
+ایران}\label{ux62fux627ux62fux647ux647ux627ux6cc-ux627ux6ccux631ux627ux646}}
 
-کدهای خود را دو صورت می‌توانید در متن نمایش دهید و یا اجرا کنید. اول به
-صورت یک جعبه رنگی مستقل،
+از ۷ موج انجام شده در موسسه پیمایش ارزش‌های جهانی، ایرانیان در سه موج
+چهارم، پنجم و هفتم حاضر هستند. دولت دهم ایران اجازه برگزاری موج ششم را
+در ایران نداد. موج هفتم در ایران در سال ۱۳۹۹ انجام شده است و داده‌های آن
+در سال ۱۴۰۰ منتشر شده است. لازم به ذکر است که موج هفتم به دلیل
+محدودیت‌های همه‌گیری کرونا، فرایند جمع‌آوری و انتشار داده‌ها کمی بیشتر از حد
+معمول طول کشیده است. داده‌های ایران (۱۵۰۰ پرسشنامه) برای جمعیت ایران معرف
+است. به بیان دیگر تحلیل‌های مبتنی بر داده‌های پیمایش ارزش‌های جهانی قابل
+تعمیم به کل جمعیت ایران است.\\
+تعداد سوالات پرسشنامه ایران، ۲۹۰ سوال است. این سوالات عموما به صورت
+مصاحبه حضوری از مخاطبین پرسیده شده. شرایط پاسخ به سوالات و زمان دقیق
+پاسخ‌ها در فایل داده‌ها موجود است. پاسخ دهندگان به صورت تصادفی از جمعیت
+کشور انتخاب شده‌اند و امکان دسترسی به هویت آن‌ها از طریق پرسشنامه
+امکان‌پذیر نیست.
 
-\begin{verbatim}
-     speed           dist       
- Min.   : 4.0   Min.   :  2.00  
- 1st Qu.:12.0   1st Qu.: 26.00  
- Median :15.0   Median : 36.00  
- Mean   :15.4   Mean   : 42.98  
- 3rd Qu.:19.0   3rd Qu.: 56.00  
- Max.   :25.0   Max.   :120.00  
-\end{verbatim}
+\hypertarget{ux646ux62dux648ux647-ux627ux633ux62aux641ux627ux62fux647-ux627ux632-ux62fux627ux62fux647}{%
+\subsection{نحوه استفاده از
+داده}\label{ux646ux62dux648ux647-ux627ux633ux62aux641ux627ux62fux647-ux627ux632-ux62fux627ux62fux647}}
 
-و به صورت برخط 1024 \texttt{2\^{}10=}.
-
-\hypertarget{markdown}{%
-\subsection{Markdown}\label{markdown}}
-
-برای نوشتن متن به راحتی از دستورهای Markdown می‌توانید بهره ببرید. به
-طور مثال برای ایجاد یک فهرست مانند زیر عمل می‌کنیم:
-
-\begin{itemize}
-\tightlist
-\item
-  فهرست یک
-\item
-  فهرست دو
-
-  \begin{itemize}
-  \tightlist
-  \item
-    زیرفهرست
-  \end{itemize}
-\end{itemize}
-
-برای بیان نقل قول هم می‌توانید از علامت \texttt{\textgreater{}} در
-ابتدای متن خود استفاده کنید
+داده‌های پیمایش جهانی در حوزه‌های مختلفی از جمله توسعه اقتصادی، توسعه
+دموکراسی، دین، برابری جنسیتی، سرمایه اجتماعی و بهداشت عمومی قابل استفاده
+است. این داده‌ها بر اساس پرسشنامه‌ای است که با جمع‌بندی پیشنهادهای اساتید
+علوم اجتماعی در سراسر جهان که به موسسه پیمایش ارزش‌های جهانی ارائه می‌شود.
+پرسشنامه هر کشور نیز از وب‌سایت موسسه قابل دسترسی است. لازم به ذکر است که
+هر کشور می‌تواند تغییرات بسیار محدودی را در پرسشنامه ایجاد کند. این
+تغییرات نباید برای بیشتر از ۱۲ سوال از کل سوالات موجود در پرسشنامه
+باشد.\\
+استفاده از این داده‌ها تنها برای مقاصد غیر انتفاعی مجاز است. در صورت
+استفاده از این داده‌ها در مقالات و پایان‌نامه‌های دانشگاهی،ارجاع به داده‌ها
+باید به صورتی که وب‌سایت موسسه آورده شده در بخش منابع مقاله یا پایان‌نامه
+قرار‌ گیرد. برای نمونه اگر از موج ششم پیمایش برای کار تحقیقی استفاده
+کرده‌اید باید به صورت زیر به آن ارجاع دهید:
 
 \begin{quote}
-بر این رواق زبر جد نوشته اند به زر که جز نکویی اهل کرم نخواهد ماند
+Inglehart, R., C. Haerpfer, A. Moreno, C. Welzel, K. Kizilova, J.
+Diez-Medrano, M. Lagos, P. Norris, E. Ponarin \& B. Puranen et
+al.~(eds.). 2014. World Values Survey: Round Six - Country-Pooled
+Datafile Version:
+\url{https://www.worldvaluessurvey.org/WVSDocumentationWV6.jsp}. Madrid:
+JD Systems Institute.
 \end{quote}
 
-\hypertarget{ux644ux627ux62aux6a9}{%
-\subsection{لاتک}\label{ux644ux627ux62aux6a9}}
+\hypertarget{ux646ux62dux648ux647-ux62fux633ux62aux631ux633ux6cc-ux628ux647-ux62fux627ux62fux647ux647ux627}{%
+\subsection{نحوه دسترسی به
+داده‌ها}\label{ux646ux62dux648ux647-ux62fux633ux62aux631ux633ux6cc-ux628ux647-ux62fux627ux62fux647ux647ux627}}
 
-در محیط RMarkdown می‌توانید مشابه لاتک فرمول‌های خود را به صورت مستقل و
-برخط بنویسید. برای این‌ کار باید فرمول خود را در میان ‍‍ ‍‍\texttt{\$\$}
-و یا \texttt{\$} بگذارید.
+تمام داده‌ها از وب‌سایت رسمی پیمایش ارزش‌های جهانی قابل دریافت است. داده‌ها
+در انواع مختلفی قابل دسترس است که امکان استفاده از نرم‌افزار‌های مختلف از
+جمله R و SPSS را فراهم می‌کند. داده‌ها به تفکیک هر موج و یا بصورت تجمیع
+شده قابل دسترس است. همچنین می‌توانید داده‌های هر کشور را جداگانه و در
+فرمت‌های داده مختلف را از سایت موسسه دریافت کنید.
+
+\newpage
+
+\hypertarget{ux645ux634ux62eux635ux627ux62a-ux67eux627ux633ux62eux6afux648ux6ccux627ux646}{%
+\section{مشخصات
+پاسخگویان}\label{ux645ux634ux62eux635ux627ux62a-ux67eux627ux633ux62eux6afux648ux6ccux627ux646}}
+
+\begin{verbatim}
+[1] "urban" "rural"
+\end{verbatim}
+
+\hypertarget{ux62cux646ux633ux6ccux62a-ux67eux627ux633ux62eux62fux647ux646ux62fux6afux627ux646}{%
+\subsection{جنسیت
+پاسخ‌دهندگان}\label{ux62cux646ux633ux6ccux62a-ux67eux627ux633ux62eux62fux647ux646ux62fux6afux627ux646}}
+
+\begin{center}\includegraphics{figure/unnamed-chunk-3-1} \end{center}
+
+\begin{longtable}[]{@{}lrl@{}}
+\toprule
+gender & n & pct \\
+\midrule
+\endhead
+مرد & 766 & 51\% \\
+زن & 733 & 49\% \\
+\bottomrule
+\end{longtable}
+
+\hypertarget{ux633ux646-ux67eux627ux633ux62eux62fux647ux646ux62fux6afux627ux646}{%
+\subsection{سن
+پاسخ‌دهندگان}\label{ux633ux646-ux67eux627ux633ux62eux62fux647ux646ux62fux6afux627ux646}}
+
+\begin{center}\includegraphics{figure/unnamed-chunk-5-1} \end{center}
+\begin{longtable}{rrc}
+\caption*{
+{\large توزیع سنی پاسخ‌دهندگان} \\ 
+{\small موج هفتم پیمایش ارزش‌های جهانی}
+} \\ 
+\toprule
+درصد & فراوانی & سن \\ 
+\midrule
+28 & 420 & 18-29 \\ 
+49 & 738 & 30-49 \\ 
+23 & 341 & 50+ \\ 
+\bottomrule
+\end{longtable}
+
+\hypertarget{ux62aux648ux632ux6ccux639-ux645ux6a9ux627ux646ux6cc-ux67eux627ux633ux62eux62fux647ux646ux62fux6afux627ux646}{%
+\subsection{توزیع مکانی
+پاسخ‌دهندگان}\label{ux62aux648ux632ux6ccux639-ux645ux6a9ux627ux646ux6cc-ux67eux627ux633ux62eux62fux647ux646ux62fux6afux627ux646}}
+
+\begin{table}
+\centering
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{10em}>{\raggedleft\arraybackslash}p{10em}>{\raggedleft\arraybackslash}p{10em}}
+\toprule
+سن & فراوانی & درصد\\
+\midrule
+18-29 & 420 & 28\\
+30-49 & 738 & 49\\
+50+ & 341 & 23\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{center}\includegraphics{figure/unnamed-chunk-8-1} \end{center}
+
+\begin{verbatim}
+# A tibble: 5 x 2
+      t     n
+  <dbl> <int>
+1    -2     4
+2    -1     6
+3     1   858
+4     2   293
+5     3   338
+\end{verbatim}
 
 \end{document}
