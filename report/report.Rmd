@@ -22,7 +22,7 @@ library(lubridate)
 library(scales)
 library(gt)
 library(gtExtras)
-
+source("manuscript/global.R")
 ```
 
 # پیمایش ارزش‌های جهانی
@@ -45,24 +45,55 @@ library(gtExtras)
 
 \newpage
 
-# مشخصات پاسخگویان  
+```{r cleaning}
+# reading file
+wvs_ir <- read_csv("/Users/macos/Documents/WVS/data/F00010944-WVS_Wave_7_Iran_Excel_v2.0.csv")
 
-```{r}
-wvs_ir <- readr::read_csv("/home/bahman/Documents/Data/wvs/data/F00010944-WVS_Wave_7_Iran_Excel_v2.0.csv")
 wvs_ir_clean <- wvs_ir %>%
   janitor::clean_names() %>%
   mutate(q260_sex = factor(q260_sex , labels = c("male" , "female"))) %>%
   mutate(urban_rural = factor(h_urbrural_urban_rural, labels = c("urban" , "rural") ))
-levels(wvs_ir_clean$urban_rural)
+
+# cleaning variable names
+names_clean <- str_extract(names(wvs_ir), pattern = "^(.+?):") %>%
+  str_remove(pattern = ":")
+
+# changing names to clean names
+names(wvs_ir) <- names_clean
+
+# separating sections 
+#social values
+social_values <- wvs_ir_clean %>%
+  select(version:PWGHT , Q1:Q45)
+
+write_csv(social_values, "data/social_values.csv")
+
+## happiness
+happiness <- wvs_ir %>%
+  select(version:PWGHT , Q46:Q56)
+
+write_csv(happiness , "data/happiness.csv")
+
+## social capital
+social_capital <- wvs_ir %>%
+  select(version:PWGHT , Q57:Q105)
+write_csv(social_capital , "data/social_capital.csv")
+
+## economic values
+economic_values <- wvs_ir %>%
+  select(version:PWGHT , Q106:Q111)
+write_csv(economic_values , "data/economic_values.csv")
+
+wvs_ir
 ```
 
 ## جنسیت پاسخ‌دهندگان  
 
 ```{r}
-source("manuscript/global.R")
-wvs_ir_clean %>%
-  mutate(q260_sex = factor(q260_sex , labels = c("male" , "female"))) %>%
-  ggplot(aes(q260_sex , fill= q260_sex)) +
+
+wvs_ir %>% 
+  mutate(Q260 = factor(Q260, labels = c("male" , "female"))) %>%
+  ggplot(aes(Q260 , fill= Q260)) +
   geom_bar(show.legend = FALSE)+
   scale_x_discrete(label = c("مرد" , "زن"))+
   stat_count(geom = "text", colour = "gold", size =3.5,
@@ -73,17 +104,19 @@ aes(label = to_fa_numbers(..count..)),position=position_stack(vjust=0.95))+
     x = "",
     y = ""
   )+
-  theme_light()+
+  theme_light()
   theme_fa
   
 ```
+
 ```{r}
-wvs_ir_clean %>%
-  mutate(gender = factor(q260_sex , labels = c("مرد" , "زن"))) %>%
+wvs_ir %>%
+  mutate(gender = factor(Q260, labels = c("مرد" , "زن"))) %>%
   group_by(gender) %>%
   summarise(n = n()) %>%
   mutate(pct = paste0(round(n/sum(n),digits = 2)*100, "%")) %>%
   knitr::kable()
+
 ```
 
 ## سن پاسخ‌دهندگان
@@ -105,6 +138,7 @@ wvs_ir_clean %>%
   theme_light()+
   theme_fa
 ```
+
 ```{r}
 gt_age <- wvs_ir_clean %>%
   mutate(age_range = case_when(
